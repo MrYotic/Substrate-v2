@@ -1,4 +1,5 @@
-﻿namespace Substrate_v2;
+﻿using System.Collections;
+namespace Substrate_v2.Item;
 /// <summary> Provides named id values for known item types. </summary>
 /// <remarks>See <see cref="BlockType"/> for additional information.</remarks>
 public static class ItemType
@@ -180,12 +181,10 @@ public static class ItemType
 /// in the <see cref="ItemInfo"/> class.</remarks>
 public class ItemInfo
 {
-    private static Random _rand = new Random();
-
+    private static Random rnd = new Random();
     private class CacheTableDict<T> : ICacheTable<T>
     {
-        private Dictionary<int, T> _cache;
-
+        private Dictionary<int, T> cache;
         public T this[int index]
         {
             get 
@@ -197,107 +196,58 @@ public class ItemInfo
                 return default(T);
             }
         }
-
-        public CacheTableDict (Dictionary<int, T> cache)
-        {
-            _cache = cache;
-        }
-
+        public CacheTableDict (Dictionary<int, T> cache) => this.cache = cache;
         public IEnumerator<T> GetEnumerator ()
         {
             foreach (T val in _cache.Values)
                 yield return val;
         }
-
-        IEnumerator IEnumerable.GetEnumerator ()
-        {
-            return GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator () => GetEnumerator();
     }
-
-    private static readonly Dictionary<int, ItemInfo> _itemTable;
-
-    private int _id = 0;
-    private string _name = "";
-    private int _stack = 1;
-
-    private static readonly CacheTableDict<ItemInfo> _itemTableCache;
-
-    /// <summary>
-    /// Gets the lookup table for id-to-info values.
-    /// </summary>
+    private static readonly Dictionary<int, ItemInfo> itemTable;
+    private static readonly CacheTableDict<ItemInfo> itemTableCache;
+    /// <summary> Gets the lookup table for id-to-info values. </summary>
     public static ICacheTable<ItemInfo> ItemTable
     {
-        get { return _itemTableCache; }
+        get => itemTableCache;
     }
-
-    /// <summary>
-    /// Gets the id of the item type.
-    /// </summary>
-    public int ID
-    {
-        get { return _id; }
-    }
-
-    /// <summary>
-    /// Gets the name of the item type.
-    /// </summary>
-    public string Name
-    {
-        get { return _name; }
-    }
-
-    /// <summary>
-    /// Gets the maximum stack size allowed for this item type.
-    /// </summary>
-    public int StackSize
-    {
-        get { return _stack; }
-    }
-
-    /// <summary>
-    /// Constructs a new <see cref="ItemInfo"/> record for the given item id.
-    /// </summary>
+    /// <summary> Gets the id of the item type. </summary>
+    public int ID { get; private set; }
+    /// <summary> Gets the name of the item type. </summary>
+    public string Name { get; private set; }
+    /// <summary> Gets the maximum stack size allowed for this item type. </summary>
+    public int StackSize { get; private set; }
+    /// <summary> Constructs a new <see cref="ItemInfo"/> record for the given item id. </summary>
     /// <param name="id">The id of an item type.</param>
     public ItemInfo (int id)
     {
-        _id = id;
-        _itemTable[_id] = this;
+        ID = id;
+        itemTable[id] = this;
     }
-
-    /// <summary>
-    /// Constructs a new <see cref="ItemInfo"/> record for the given item id and name.
-    /// </summary>
+    /// <summary> Constructs a new <see cref="ItemInfo"/> record for the given item id and name. </summary>
     /// <param name="id">The id of an item type.</param>
     /// <param name="name">The name of an item type.</param>
     public ItemInfo (int id, string name)
     {
-        _id = id;
-        _name = name;
-        _itemTable[_id] = this;
+        ID = id;
+        Name = name;
+        itemTable[id] = this;
     }
-
-    /// <summary>
-    /// Sets the maximum stack size for this item type.
-    /// </summary>
+    /// <summary> Sets the maximum stack size for this item type. </summary>
     /// <param name="stack">A stack size between 1 and 64, inclusive.</param>
     /// <returns>The object instance used to invoke this method.</returns>
     public ItemInfo SetStackSize (int stack)
     {
-        _stack = stack;
+        StackSize = stack;
         return this;
     }
-
-    /// <summary>
-    /// Chooses a registered item type at random and returns it.
-    /// </summary>
+    /// <summary> Chooses a registered item type at random and returns it. </summary>
     /// <returns></returns>
     public static ItemInfo GetRandomItem ()
     {
-        List<ItemInfo> list = new List<ItemInfo>(_itemTable.Values);
-        return list[_rand.Next(list.Count)];
+        List<ItemInfo> list = new List<ItemInfo>(itemTable.Values);
+        return list[rnd.Next(list.Count)];
     }
-
     public static ItemInfo IronShovel;
     public static ItemInfo IronPickaxe;
     public static ItemInfo IronAxe;
@@ -470,8 +420,8 @@ public class ItemInfo
 
     static ItemInfo ()
     {
-        _itemTable = new Dictionary<int, ItemInfo>();
-        _itemTableCache = new CacheTableDict<ItemInfo>(_itemTable);
+        itemTable = new Dictionary<int, ItemInfo>();
+        itemTableCache = new CacheTableDict<ItemInfo>(itemTable);
 
         IronShovel = new ItemInfo(256, "Iron Shovel");
         IronPickaxe = new ItemInfo(257, "Iron Pickaxe");

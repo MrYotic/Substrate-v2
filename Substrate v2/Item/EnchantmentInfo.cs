@@ -1,4 +1,4 @@
-﻿namespace Substrate_v2;
+﻿namespace Substrate_v2.Item;
 /// <summary> Provides information on a specific type of enchantment. </summary>
 /// <remarks>By default, all known MC enchantment types are already defined and registered, assuming Substrate
 /// is up to date with the current MC version.

@@ -1,4 +1,4 @@
-﻿namespace Substrate_v2;
+﻿namespace Substrate_v2.Item;
 /// <summary> Represents an enchantment that can be applied to some <see cref="Item"/>s. </summary>
 public class Enchantment : INbtObject<Enchantment>, ICopyable<Enchantment>
 {

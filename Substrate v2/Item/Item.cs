@@ -1,4 +1,4 @@
-﻿namespace Substrate_v2;
+﻿namespace Substrate_v2.Item;
 /// <summary> Represents an item (or item stack) within an item slot. </summary>
 public class Item : INbtObject<Item>, ICopyable<Item>
 {
@@ -22,24 +22,16 @@ public class Item : INbtObject<Item>, ICopyable<Item>
     /// <summary> Gets or sets the damage value of the item. </summary>
     /// <remarks>The damage value may represent a generic data value for some items.</remarks>
     public int Damage { get; set; }
-    /// <summary>
-    /// Gets or sets the number of this item stacked together in an item slot.
-    /// </summary>
+    /// <summary> Gets or sets the number of this item stacked together in an item slot. </summary>
     public int Count { get; set; }
-    /// <summary>
-    /// Gets the list of <see cref="Enchantment"/>s applied to this item.
-    /// </summary>
+    /// <summary> Gets the list of <see cref="Enchantment"/>s applied to this item. </summary>
     public IList<Enchantment> Enchantments
     {
         get => enchantments;
     }
-    /// <summary>
-    /// Gets the source <see cref="TagNodeCompound"/> used to create this <see cref="Item"/> if it exists.
-    /// </summary>
+    /// <summary> Gets the source <see cref="TagNodeCompound"/> used to create this <see cref="Item"/> if it exists. </summary>
     public TagNodeCompound Source { get; private set; }
-    /// <summary>
-    /// Gets a <see cref="SchemaNode"/> representing the schema of an item.
-    /// </summary>
+    /// <summary> Gets a <see cref="SchemaNode"/> representing the schema of an item. </summary>
     public static SchemaNodeCompound Schema { get; private set; } = new SchemaNodeCompound("")
     {
         new SchemaNodeScaler("id", TagType.TAG_SHORT),
@@ -106,8 +98,6 @@ public class Item : INbtObject<Item>, ICopyable<Item>
         }
         if (Source != null)
             tree.MergeFrom(Source);
-
         return tree;
-    }
-    public bool ValidateTree (TagNode tree) => new NbtVerifier(tree, Schema).Verify();
+    }    public bool ValidateTree (TagNode tree) => new NbtVerifier(tree, Schema).Verify();
 }
